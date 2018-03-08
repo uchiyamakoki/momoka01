@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!--4."通配符的匹配很全面, 但无法找到元素 'tx:annotation-driven' 的声明" 的解决方案 少了后面两个tx -->
+
+    <!-- 开启包扫描-->
+    <context:component-scan base-package="yui.momoka"/>
+    <!-- 配置druid数据源  加改成自己的-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="username" value="root"/>
+        <property name="password" value="1234"/>
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/momoka_blog"/>
+    </bean>
+    <!-- 配置mybatis的sqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 自动扫描mapper.xml文件 加改成自己的，还有要创建mapper directory和xml-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <!-- 载入mybatis全局配置文件-->
+        <property name="configLocation" value="classpath:mybatis-conf.xml"/>
+    </bean>
+
+    <!-- 配置mybatis dao接口扫描 改成自己的dao-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="yui.momoka.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+    <!-- 配置spring的声明式事务，名字为默认值 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- 开启事务控制的注解支持 -->
+    <!--annotation-driven" is not bound. xmlns:tx="http://www.springframework.org/schema/tx" -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>
