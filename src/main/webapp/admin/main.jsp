@@ -16,6 +16,31 @@
             font-family: microsoft yahei;
         }
     </style>
+    <script>
+        /**
+         * 打开选项卡
+         * @param text  选项卡标题
+         * @param url   请求打开路径
+         * @param icon  选项卡图标
+         */
+        function openTab(text,url,icon) { //文字，地址，图标 <a href="javascript:openTab('写博客','writeBlog.jsp','icon-writeblog')" class="easyui-linkbutton"
+            //data-options="plain:true,iconCls:'icon-writeblog'" style="width: 150px">写博客</a>
+            //判断当前选项卡是否存在
+            if($('#tabs').tabs('exists',text)){
+                //如果存在 显示
+                $("#tabs").tabs("select",text);
+            }else{
+                //如果不存在 则新建一个
+                $("#tabs").tabs('add',{
+                    title:text,
+                    closable:true,      //是否允许选项卡摺叠。
+                    iconCls:icon,    //显示图标
+                    content:"<iframe frameborder=0 scrolling='auto' style='width:100%;height:100%' src='${blog}/admin/"+url+"'></iframe>"
+                    //url 远程加载所打开的url
+                })
+            }
+        }
+    </script>
 </head>
 <body class="easyui-layout">
 <div region="north" style="height: 78px; background-color: #E0ECFF">
